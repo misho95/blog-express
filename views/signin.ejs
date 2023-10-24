@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/forms.css" />
+    <title>SignIn</title>
+</head>
+<body>
+    <form action="/api/v1/auth/signin" method="post">
+        <h2>SignIn</h2>
+        <input type="email" placeholder="email" name="email" required/>
+        <input type="password" placeholder="******" name="password" required/>
+        <span>Dont have an account? <a href="/signup">SignUp</a></span>
+        <button>SignIn</button>
+    </form>
+</body>
+</html>
