@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/">Home</a>
+      <a href="/addArticles">Add article</a>
+      <a href="/profile">Profile</a>
+      <a href="/signout">SignOut</a>
+    </header>
+    <div class="profile-container">
+      <h1>Profile</h1>
+      <h2><%= userData.username %></h2>
+      <h3><%= userData.firstname %></h3>
+      <h3><%= userData.lastname %></h3>
+      <h3><%= userData.email %></h3>
+      <h3><%= userData.password %></h3>
+      <h3><%= userData.sex %></h3>
+      <h3><%= userData.createdAt %></h3>
+      <a href="/reset">Reset Password</a>
+    </div>
+  </body>
+</html>

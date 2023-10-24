@@ -1,0 +1,76 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #e5e5e5;
+}
+
+header {
+  background-color: #6366f1;
+  padding: 16px;
+  display: flex;
+  gap: 20px;
+}
+
+header a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: large;
+}
+
+header a:hover {
+  color: #e0e7ff;
+}
+
+.profile-container {
+  padding: 20px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-container h2 {
+  color: #6366f1;
+  padding: 5px;
+}
+
+.profile-container a {
+  color: red;
+}
+
+.add-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.add-section form {
+  width: 500px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-section form input,
+textarea {
+  padding: 10px;
+}
+
+.feed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.feed-box {
+  display: flex;
+  flex-direction: column;
+  width: 700px;
+  gap: 20px;
+}

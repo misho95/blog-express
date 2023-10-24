@@ -20,46 +20,23 @@
 
     <section class="feed-container">
       <div class="feed-box">
-        <% feed.forEach((f) => { %>
         <article style="border: 1px solid black; padding: 10px">
           <div style="padding: 5px; border: solid 1px rgb(131, 131, 131)">
-            <a style="color: blue" href="/<%=f.id %>" /><%= f.title %></a>
+            <%= f.title %>
           </div>
           <div style="padding: 5px"><%= f.description %></div>
           <div>
-            <button onclick="upVote('<%=f.id%>')" style="color: #22c55e">
+            <button style="color: #22c55e">
               <span class="material-symbols-outlined"> thumb_up </span>
               <div><%= f.upvotes.length %></div>
             </button>
-            <button onclick="downVote('<%=f.id%>')" style="color: #ef4444">
+            <button style="color: #ef4444">
               <span class="material-symbols-outlined"> thumb_down </span>
               <div><%= f.downvotes.length %></div>
             </button>
           </div>
         </article>
-        <% }) %>
       </div>
     </section>
-
-    <script>
-      const upVote =  (id) => {
-        try{
-          fetch(`/${id}?action=upvote`, {
-            method: "PUT",
-          })
-        } catch(err){
-          console.log(err);
-        }
-      }
-      const downVote =  (id) => {
-        try{
-          fetch(`/${id}?action=downvote`, {
-            method: "PUT",
-          })
-        } catch(err){
-          console.log(err);
-        }
-      }
-    </script>
   </body>
 </html>

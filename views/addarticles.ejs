@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/">Home</a>
+      <a href="/addArticles">Add article</a>
+      <a href="/profile">Profile</a>
+      <a href="/signout">SignOut</a>
+    </header>
+    <section class="add-section">
+      <form action="/api/v1/article" method="post">
+        <input type="text" placeholder="title..." name="title" required />
+        <textarea placeholder="description..." name="des" required></textarea>
+        <button>Submit</button>
+      </form>
+    </section>
+  </body>
+</html>

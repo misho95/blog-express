@@ -25,6 +25,15 @@ interface userType {
   createdAt: string;
 }
 
+interface articleType {
+  id: number;
+  title: string;
+  description: string;
+  upvotes: [];
+  downvotes: [];
+  author: string;
+}
+
 interface customRequest extends Request {
   token?: string;
 }
@@ -46,7 +55,77 @@ const authMiddleWear = (
 };
 
 app.get("/", authMiddleWear, (req: Request, res: Response) => {
-  res.render("index");
+  readFile(
+    "article.json",
+    (err: NodeJS.ErrnoException | null, data: string | Buffer) => {
+      if (err) {
+        res.render("index", { feed: [] });
+        return;
+      }
+
+      if (data.toString() === "") {
+        res.render("index", { feed: [] });
+        return;
+      }
+
+      const parseData = JSON.parse(data.toString());
+      res.render("index", { feed: parseData });
+    }
+  );
+});
+
+app.get("/:id", authMiddleWear, (req: customRequest, res: Response) => {
+  readFile(
+    "article.json",
+    (err: NodeJS.ErrnoException | null, data: string | Buffer) => {
+      if (err) {
+        res.render("index", { feed: [] });
+      }
+
+      const parseData = JSON.parse(data.toString());
+      const findById = parseData.find((f: articleType) => {
+        if (f.id === +req.params.id) {
+          return f;
+        }
+      });
+      res.render("article", { f: findById });
+    }
+  );
+});
+
+app.put("/:id", authMiddleWear, (req: customRequest, res: Response) => {
+  readFile(
+    "article.json",
+    (err: NodeJS.ErrnoException | null, data: string | Buffer) => {
+      if (err) {
+        throw err;
+      }
+      const action = req.query.action;
+      const parseData = JSON.parse(data.toString());
+      let update = [];
+
+      switch (action) {
+        case "upvote":
+          update = parseData.map((f: articleType) => {
+            if (f.id === +req.params.id) {
+              return { ...f, upvotes: [...f.upvotes, req.token] };
+            } else return f;
+          });
+          break;
+        case "downvote":
+          update = parseData.map((f: articleType) => {
+            if (f.id === +req.params.id) {
+              return { ...f, downvotes: [...f.downvotes, req.token] };
+            } else return f;
+          });
+          break;
+      }
+
+      writeFile("article.json", JSON.stringify(update), (err) => {
+        if (err) throw err;
+      });
+    }
+  );
 });
 
 app.get("/signin", (req: Request, res: Response) => {
@@ -59,6 +138,75 @@ app.get("/signup", (req: Request, res: Response) => {
 app.get("/reset", authMiddleWear, (req: Request, res: Response) => {
   res.render("reset");
 });
+
+app.get("/signout", authMiddleWear, (req: Request, res: Response) => {
+  res.cookie("token", "");
+  res.status(200);
+  res.redirect("/signin");
+});
+
+app.get("/profile", authMiddleWear, (req: customRequest, res: Response) => {
+  readFile(
+    "users.json",
+    (err: NodeJS.ErrnoException | null, data: string | Buffer) => {
+      if (err) {
+        res.status(400).send("no data");
+        return;
+      }
+
+      const parsedUserData = JSON.parse(data.toString());
+      const userData = parsedUserData.find((u: userType) => {
+        if (u.id === req.token) return u;
+      });
+
+      res.render("profile", { userData });
+    }
+  );
+});
+
+app.get("/addarticles", authMiddleWear, (req: customRequest, res: Response) => {
+  res.render("addarticles");
+});
+
+app.post(
+  "/api/v1/article",
+  authMiddleWear,
+  (req: customRequest, res: Response) => {
+    const { title, des } = req.body;
+
+    const articleObject = {
+      id: new Date().getTime(),
+      title,
+      description: des,
+      upvotes: [],
+      downvotes: [],
+      author: req.token,
+    };
+
+    readFile(
+      "article.json",
+      (err: NodeJS.ErrnoException | null, data: string | Buffer) => {
+        if (err) {
+          writeFile("article.json", JSON.stringify([articleObject]), (err) => {
+            if (err) throw err;
+            res.redirect("/");
+          });
+        }
+
+        const parsedData = JSON.parse(data.toString());
+
+        writeFile(
+          "article.json",
+          JSON.stringify([...parsedData, articleObject]),
+          (err) => {
+            if (err) throw err;
+            res.redirect("/");
+          }
+        );
+      }
+    );
+  }
+);
 
 app.post("/api/v1/auth/signin", (req: Request, res: Response) => {
   const { email, password } = req.body;
