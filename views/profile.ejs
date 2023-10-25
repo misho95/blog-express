@@ -5,24 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Page</title>
     <link rel="stylesheet" href="css/main.css" />
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+  />
   </head>
   <body>
     <header>
       <a href="/">Home</a>
-      <a href="/addArticles">Add article</a>
+      <a href="/addarticles">Add article</a>
       <a href="/profile">Profile</a>
       <a href="/signout">SignOut</a>
     </header>
-    <div class="profile-container">
-      <h1>Profile</h1>
-      <h2><%= userData.username %></h2>
-      <h3><%= userData.firstname %></h3>
-      <h3><%= userData.lastname %></h3>
-      <h3><%= userData.email %></h3>
-      <h3><%= userData.password %></h3>
-      <h3><%= userData.sex %></h3>
-      <h3><%= userData.createdAt %></h3>
-      <a href="/reset">Reset Password</a>
+    <div style="display: flex;">
+      <div class="profile-container">
+        <h1>Profile</h1>
+        <h2><%= userData.username %></h2>
+        <h3><%= userData.firstname %></h3>
+        <h3><%= userData.lastname %></h3>
+        <h3><%= userData.email %></h3>
+        <h3><%= userData.password %></h3>
+        <h3><%= userData.sex %></h3>
+        <h3><%= userData.createdAt %></h3>
+        <a href="/reset">Reset Password</a>
+      </div>
+      <div style="width: 100%; padding: 10px">
+        <% userArticle.forEach((f) => { %>
+          <article style="border: 1px solid black; padding: 10px">
+            <div style="padding: 5px; border: solid 1px rgb(131, 131, 131)">
+              <a style="color: blue" href="/article/<%=f.id %>" /><%= f.title %></a>
+            </div>
+            <div style="padding: 5px"><%= f.description %></div>
+  
+            <div>
+              <button style="color: #22c55e">
+                <span class="material-symbols-outlined"> thumb_up </span>
+                <div><%= f.upvotes.length %></div>
+              </button>
+              <button style="color: #ef4444">
+                <span class="material-symbols-outlined"> thumb_down </span>
+                <div><%= f.downvotes.length %></div>
+              </button>
+            </div>
+            <div style="padding: 5px;"><%= f.tags %></div>
+          </article>
+          <% }) %>
+      </div>
     </div>
   </body>
 </html>

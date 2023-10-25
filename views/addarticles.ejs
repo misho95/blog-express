@@ -9,7 +9,7 @@
   <body>
     <header>
       <a href="/">Home</a>
-      <a href="/addArticles">Add article</a>
+      <a href="/addarticles">Add article</a>
       <a href="/profile">Profile</a>
       <a href="/signout">SignOut</a>
     </header>
@@ -17,6 +17,11 @@
       <form action="/api/v1/article" method="post">
         <input type="text" placeholder="title..." name="title" required />
         <textarea placeholder="description..." name="des" required></textarea>
+        <input
+          type="text"
+          placeholder="tags... use commas for multi tags"
+          name="tags"
+        />
         <button>Submit</button>
       </form>
     </section>

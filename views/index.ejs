@@ -13,7 +13,7 @@
   <body>
     <header>
       <a href="/">Home</a>
-      <a href="/addArticles">Add article</a>
+      <a href="/addarticles">Add article</a>
       <a href="/profile">Profile</a>
       <a href="/signout">SignOut</a>
     </header>
@@ -23,9 +23,10 @@
         <% feed.forEach((f) => { %>
         <article style="border: 1px solid black; padding: 10px">
           <div style="padding: 5px; border: solid 1px rgb(131, 131, 131)">
-            <a style="color: blue" href="/<%=f.id %>" /><%= f.title %></a>
+            <a style="color: blue" href="/article/<%=f.id %>" /><%= f.title %></a>
           </div>
           <div style="padding: 5px"><%= f.description %></div>
+
           <div>
             <button onclick="upVote('<%=f.id%>')" style="color: #22c55e">
               <span class="material-symbols-outlined"> thumb_up </span>
@@ -36,30 +37,38 @@
               <div><%= f.downvotes.length %></div>
             </button>
           </div>
+          <div style="padding: 5px;"><%= f.tags %></div>
         </article>
         <% }) %>
       </div>
     </section>
 
+
     <script>
-      const upVote =  (id) => {
+      const upVote = (id) => {
         try{
-          fetch(`/${id}?action=upvote`, {
-            method: "PUT",
-          })
-        } catch(err){
-          console.log(err);
+          fetch(`/api/v1/article/${id}?action=upvote`, { method: 'PUT'}).then((res) => {
+            if(res.status === 200){
+              location.reload()
+            }
+          });
+        } catch(err) {
+          throw err;
         }
       }
-      const downVote =  (id) => {
+
+      const downVote = (id) => {
         try{
-          fetch(`/${id}?action=downvote`, {
-            method: "PUT",
-          })
-        } catch(err){
-          console.log(err);
+          fetch(`/api/v1/article/${id}?action=downvote`, { method: 'PUT'}).then((res) => {
+            if(res.status === 200){
+              location.reload()
+            }
+          });
+        } catch(err) {
+          throw err;
         }
       }
     </script>
+   
   </body>
 </html>

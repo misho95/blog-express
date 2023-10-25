@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/forms.css" />
     <title>SignUp</title>
-</head>
-<body>
+  </head>
+  <body>
     <form action="/api/v1/auth/signup" method="post">
-        <h2>SignUp</h2>
-        <input type="text" placeholder="username" name="username" required/>
-        <input type="text" placeholder="firstname" name="firstname" required/>
-        <input type="text" placeholder="lastname" name="lastname" required/>
-        <input type="email" placeholder="email" name="email" required/>
-        <input type="password" placeholder="******" name="password" required/>
-        <div>
-            male <input type="radio" name="sex" value="male" required/>
-            female <input type="radio" name="sex" value="female" required/>
-        </div>
-        <button>SignUp</button>
-        <span>Already have an account? <a href="/signin">SignIn</a></span>
+      <h2>SignUp</h2>
+      <input type="text" placeholder="username" name="username" required />
+      <input type="text" placeholder="firstname" name="firstname" required />
+      <input type="text" placeholder="lastname" name="lastname" required />
+      <input type="email" placeholder="email" name="email" required />
+      <input type="password" placeholder="******" name="password" required />
+      <div>
+        male <input type="radio" name="sex" value="male" required /> female
+        <input type="radio" name="sex" value="female" required />
+      </div>
+      <button>SignUp</button>
+      <span>Already have an account? <a href="/signin">SignIn</a></span>
     </form>
-</body>
+  </body>
 </html>
