@@ -34,6 +34,8 @@
           <article style="border: 1px solid black; padding: 10px">
             <div style="padding: 5px; border: solid 1px rgb(131, 131, 131)">
               <a style="color: blue" href="/article/<%=f.id %>" /><%= f.title %></a>
+                <button onclick="deleteArticle('<%=f.id%>')">Delete</button>
+                <a href="/article/edit/<%=f.id %>">Edit</a>
             </div>
             <div style="padding: 5px"><%= f.description %></div>
   
@@ -52,5 +54,19 @@
           <% }) %>
       </div>
     </div>
+
+    <script>
+      const deleteArticle = (id) => {
+        try{
+          fetch(`/api/v1/article/${id}`, {method: "DELETE"}).then((req) => {
+            if(req.status === 200){
+              location.reload();
+            }
+          });
+        } catch(err) {
+          throw err;
+        }
+      }
+    </script>
   </body>
 </html>

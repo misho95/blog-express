@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+  </head>
+  <body>
+    <header>
+      <a href="/">Home</a>
+      <a href="/addarticles">Add article</a>
+      <a href="/profile">Profile</a>
+      <a href="/signout">SignOut</a>
+    </header>
+
+    <section class="feed-container">
+      <div class="feed-box">
+        <article style="border: 1px solid black; padding: 10px">
+          <div style="padding: 5px; border: solid 1px rgb(131, 131, 131)">
+            <p><%= article.title %></p>
+          </div>
+          <div style="padding: 5px"><%= article.description %></div>
+
+          <div>
+            <button onclick="upVote('<%=article.id%>')" style="color: #22c55e">
+              <span class="material-symbols-outlined"> thumb_up </span>
+              <div><%= article.upvotes.length %></div>
+            </button>
+            <button
+              onclick="downVote('<%=article.id%>')"
+              style="color: #ef4444"
+            >
+              <span class="material-symbols-outlined"> thumb_down </span>
+              <div><%= article.downvotes.length %></div>
+            </button>
+          </div>
+          <div style="padding: 5px"><b>Tags:</b> <%= article.tags %></div>
+        </article>
+      </div>
+      <div class="com-container">
+        <% comment.forEach((c) => { %>
+        <div>
+          <h3 style="padding: 5px; color: crimson"><%= c.userId.username %></h3>
+          <p><%= c.comment %></p>
+        </div>
+        <% }) %>
+      </div>
+      <div class="com-box">
+        <form action="/article/<%=article.id%>" method="post">
+          <textarea
+            placeholder="comment..."
+            class="com-input"
+            name="message"
+          ></textarea>
+          <button>Comment</button>
+        </form>
+      </div>
+    </section>
+
+    <script>
+      const upVote = (id) => {
+        try {
+          fetch(`/api/v1/article/${id}?action=upvote`, { method: "PUT" }).then(
+            (res) => {
+              if (res.status === 200) {
+                location.reload();
+              }
+            }
+          );
+        } catch (err) {
+          throw err;
+        }
+      };
+
+      const downVote = (id) => {
+        try {
+          fetch(`/api/v1/article/${id}?action=downvote`, {
+            method: "PUT",
+          }).then((res) => {
+            if (res.status === 200) {
+              location.reload();
+            }
+          });
+        } catch (err) {
+          throw err;
+        }
+      };
+    </script>
+  </body>
+</html>

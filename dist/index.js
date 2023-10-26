@@ -27,6 +27,7 @@ app.set("view engine", "ejs");
 app.use(express_1.default.json());
 const User = require("./models/user.model");
 const Article = require("./models/article.model");
+const Comment = require("./models/comment.model");
 const port = 3000;
 const authMiddleWear = (req, res, next) => {
     const token = req.cookies.token;
@@ -38,13 +39,41 @@ const authMiddleWear = (req, res, next) => {
     req.token = token;
     next();
 };
+const ownerMiddleWear = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const artileId = req.params.id;
+    const article = yield Article.findOne({ _id: artileId, userId: req.token });
+    if (article) {
+        req["owner"] = true;
+    }
+    else {
+        req["owner"] = false;
+    }
+    next();
+});
 app.get("/", authMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const article = yield Article.find();
     res.render("index", { feed: article });
 }));
 app.get("/article/:id", authMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const article = yield Article.find({ _id: req.params.id });
-    res.render("index", { feed: article });
+    const article = yield Article.findOne({ _id: req.params.id });
+    const comment = yield Comment.find({ articleId: req.params.id }).populate("userId");
+    res.render("article", { article, comment });
+}));
+app.post("/article/:id", authMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.body.message) {
+        res.status(400);
+        res.redirect(`/article/${req.params.id}`);
+        return;
+    }
+    const articleId = req.params.id;
+    const userId = req.token;
+    const comment = new Comment();
+    comment.comment = req.body.message;
+    comment.userId = userId;
+    comment.articleId = articleId;
+    yield comment.save();
+    res.status(201);
+    res.redirect(`/article/${req.params.id}`);
 }));
 app.get("/addarticles", authMiddleWear, (req, res) => {
     res.render("addarticles");
@@ -60,6 +89,38 @@ app.post("/api/v1/article", authMiddleWear, (req, res) => __awaiter(void 0, void
     yield article.save();
     res.status(201);
     res.redirect("/");
+}));
+app.get("/article/edit/:id", authMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const article = yield Article.findOne({ _id: req.params.id });
+    res.render("editarticle", { article });
+}));
+app.put("/article/edit/:id", authMiddleWear, ownerMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.owner) {
+        res.status(403);
+        res.json({ error: "no access!" });
+        return;
+    }
+    const { title, des, tags } = req.body;
+    yield Article.updateOne({
+        _id: req.params.id,
+    }, {
+        title: title,
+        description: des,
+        tags: tags,
+    });
+    res.status(200);
+    res.json({ status: "ok" });
+}));
+app.delete("/api/v1/article/:id", authMiddleWear, ownerMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.owner) {
+        res.status(403);
+        res.json({ error: "no access!" });
+        return;
+    }
+    yield Article.deleteOne({ _id: req.params.id });
+    yield Comment.deleteMany({ articleId: req.params.id });
+    res.status(200);
+    res.json({ ok: true });
 }));
 app.put("/api/v1/article/:id", authMiddleWear, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const articleId = req.params.id;

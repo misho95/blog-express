@@ -14,31 +14,13 @@ app.use(express.json());
 
 const User = require("./models/user.model");
 const Article = require("./models/article.model");
+const Comment = require("./models/comment.model");
 
 const port = 3000;
 
-interface userType {
-  id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-  sex: string;
-  createdAt: string;
-}
-
-interface articleType {
-  id: number;
-  title: string;
-  description: string;
-  upvotes: [];
-  downvotes: [];
-  author: string;
-}
-
 interface customRequest extends Request {
   token?: string;
+  owner?: boolean;
 }
 
 const authMiddleWear = (
@@ -57,15 +39,61 @@ const authMiddleWear = (
   next();
 };
 
+const ownerMiddleWear = async (
+  req: customRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const artileId = req.params.id;
+
+  const article = await Article.findOne({ _id: artileId, userId: req.token });
+  if (article) {
+    req["owner"] = true;
+  } else {
+    req["owner"] = false;
+  }
+
+  next();
+};
+
 app.get("/", authMiddleWear, async (req: Request, res: Response) => {
   const article = await Article.find();
   res.render("index", { feed: article });
 });
 
-app.get("/article/:id", authMiddleWear, async (req: Request, res: Response) => {
-  const article = await Article.find({ _id: req.params.id });
-  res.render("index", { feed: article });
-});
+app.get(
+  "/article/:id",
+  authMiddleWear,
+  async (req: customRequest, res: Response) => {
+    const article = await Article.findOne({ _id: req.params.id });
+    const comment = await Comment.find({ articleId: req.params.id }).populate(
+      "userId"
+    );
+    res.render("article", { article, comment });
+  }
+);
+
+app.post(
+  "/article/:id",
+  authMiddleWear,
+  async (req: customRequest, res: Response) => {
+    if (!req.body.message) {
+      res.status(400);
+      res.redirect(`/article/${req.params.id}`);
+      return;
+    }
+    const articleId = req.params.id;
+    const userId = req.token;
+    const comment = new Comment();
+    comment.comment = req.body.message;
+    comment.userId = userId;
+    comment.articleId = articleId;
+
+    await comment.save();
+    res.status(201);
+    res.redirect(`/article/${req.params.id}`);
+  }
+);
 
 app.get("/addarticles", authMiddleWear, (req: customRequest, res: Response) => {
   res.render("addarticles");
@@ -86,6 +114,62 @@ app.post(
     await article.save();
     res.status(201);
     res.redirect("/");
+  }
+);
+
+app.get(
+  "/article/edit/:id",
+  authMiddleWear,
+  async (req: customRequest, res: Response) => {
+    const article = await Article.findOne({ _id: req.params.id });
+    res.render("editarticle", { article });
+  }
+);
+
+app.put(
+  "/article/edit/:id",
+  authMiddleWear,
+  ownerMiddleWear,
+  async (req: customRequest, res: Response) => {
+    if (!req.owner) {
+      res.status(403);
+      res.json({ error: "no access!" });
+      return;
+    }
+
+    const { title, des, tags } = req.body;
+
+    await Article.updateOne(
+      {
+        _id: req.params.id,
+      },
+      {
+        title: title,
+        description: des,
+        tags: tags,
+      }
+    );
+
+    res.status(200);
+    res.json({ status: "ok" });
+  }
+);
+
+app.delete(
+  "/api/v1/article/:id",
+  authMiddleWear,
+  ownerMiddleWear,
+  async (req: customRequest, res: Response) => {
+    if (!req.owner) {
+      res.status(403);
+      res.json({ error: "no access!" });
+      return;
+    }
+
+    await Article.deleteOne({ _id: req.params.id });
+    await Comment.deleteMany({ articleId: req.params.id });
+    res.status(200);
+    res.json({ ok: true });
   }
 );
 

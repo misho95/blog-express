@@ -1,12 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
-const ArticleSchema = new mongoose.Schema(
+const CommentSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    tags: { type: [String], require: false },
+    comment: { type: String, required: true },
     upvotes: { type: [String], require: false },
     downvotes: { type: [String], require: false },
+    articleId: { type: Schema.Types.ObjectId, ref: "Article" },
     userId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
@@ -14,4 +13,4 @@ const ArticleSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Article", ArticleSchema);
+module.exports = mongoose.model("Comment", CommentSchema);

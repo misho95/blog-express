@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/">Home</a>
+      <a href="/addarticles">Add article</a>
+      <a href="/profile">Profile</a>
+      <a href="/signout">SignOut</a>
+    </header>
+    <section class="add-section">
+      <form id="editForm">
+        <input
+          type="text"
+          placeholder="title..."
+          name="title"
+          class="title"
+          required
+          value="<%= article.title %>"
+        />
+        <textarea placeholder="description..." name="des" class="des" required>
+<%= article.description %></textarea
+        >
+        <input
+          type="text"
+          placeholder="tags... use commas for multi tags"
+          name="tags"
+          class="tags"
+          value="<%= article.tags %>"
+        />
+        <button>Submit</button>
+      </form>
+    </section>
+
+    <script>
+      const editForm = document.querySelector("#editForm");
+
+      let title = document.querySelector(".title");
+      title.addEventListener("keydown", (e) => {
+        title.value = e.target.value;
+      });
+
+      let des = document.querySelector(".des");
+      des.addEventListener("keydown", (e) => {
+        des.value = e.target.value;
+      });
+
+      let tags = document.querySelector(".tags");
+      tags.addEventListener("keydown", (e) => {
+        tags.value = e.target.value;
+      });
+
+      editForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = "<%= article.id %>";
+
+        const data = {
+          title: title.value,
+          des: des.value,
+          tags: tags.value,
+        };
+
+        try {
+          fetch(`/article/edit/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }).then((req) => {
+            if (req.status === 200) {
+              window.location.href = "/profile";
+            }
+          });
+        } catch (err) {
+          throw err;
+        }
+      });
+    </script>
+  </body>
+</html>

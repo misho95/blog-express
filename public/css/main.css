@@ -63,9 +63,11 @@ textarea {
 
 .feed-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  gap: 20px;
 }
 
 .feed-box {
@@ -73,4 +75,41 @@ textarea {
   flex-direction: column;
   width: 700px;
   gap: 20px;
+}
+
+.com-box {
+  width: 700px;
+}
+
+.com-box form {
+  position: relative;
+  width: 100%;
+  height: 60px;
+}
+
+.com-input {
+  width: 100%;
+  height: 60px;
+  padding: 20px;
+  border: 1px solid rgb(134, 134, 134);
+  background-color: rgb(243, 243, 243);
+  resize: none;
+  position: absolute;
+}
+
+.com-box form button {
+  position: absolute;
+  z-index: 10;
+  background-color: #6366f1;
+  padding: 5px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+}
+
+.com-container {
+  width: 700px;
 }
